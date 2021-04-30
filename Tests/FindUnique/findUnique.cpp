@@ -1,49 +1,46 @@
 #include <iostream>
 #include <map>
+#include <limits>
 using namespace std;
 
 struct entry
 {
-    int count;
-    int position;
+    int ocurrences {0};
+    int lastPosition{std::numeric_limits<int>::max()};
 };
 
 int main()
 {
+    cout << "Enter the string to be searched for the first unique character:" << endl;
     string input;
     cin >> input;
 
-    // map<char,entry> ocurrences;
-    entry ocurrences[256];
-    for (auto &o : ocurrences)
-    {
-        o = {0, 0};
-    }
+    map<char,entry> characterHash;
 
+    //Populate hash with ocurrences and last position for each character present on the input string
     int position = 0;
     for (auto c : input)
     {
-        ++ocurrences[c].count;
-        ocurrences[c].position = position;
+        ++characterHash[c].ocurrences;
+        characterHash[c].lastPosition = position;
         ++position;
     }
 
-    char unique{0};
-    char i{0};
-    for (const auto& o : ocurrences)
+    //Go through the characterHash looking for an unique character
+    //if found stor its positions on the position local variable
+    char uniqueChar{0};
+    for (const auto& o : characterHash)
     {
-        if((o.count == 1) && (o.position < position))
+        if((o.second.ocurrences == 1) && (o.second.lastPosition < position))
         {
-            position = o.position;
-            unique = i;
+            position = o.second.lastPosition;
+            uniqueChar = o.first;
         }
-        ++i;
     }
 
 
-
     if( position < input.size() )
-        cout << "First Unique character: " << unique << " at " << position << endl;
+        cout << "First Unique character: " << uniqueChar << " at " << position << endl;
     else
         cout << "No unique characters on input string!" << endl;
 
