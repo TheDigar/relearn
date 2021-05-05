@@ -1,15 +1,15 @@
 
-#include <SlowVector.h>
+#include <MyVector.h>
 
 //Constructors
-SlowVector::SlowVector(int sz)
+MyVector::MyVector(int sz)
 :size{sz}
 {
     data = new double[size];
 }
 
 //Copy Constructor
-SlowVector::SlowVector(const SlowVector& v) :
+MyVector::MyVector(const MyVector& v) :
 size{v.size}
 {
     data = new double[size];
@@ -20,7 +20,7 @@ size{v.size}
 }
 
 //Move Constructor
-SlowVector::SlowVector(SlowVector&& v):
+MyVector::MyVector(MyVector&& v):
 size{v.size},
 data{v.data}
 {
@@ -29,7 +29,7 @@ data{v.data}
 }
 
 //Destructor
-SlowVector::~SlowVector()
+MyVector::~MyVector()
 {
     delete[] data;
 }
@@ -37,7 +37,7 @@ SlowVector::~SlowVector()
 
 //Operators
 //Copy assignment
-SlowVector &SlowVector::operator=(const SlowVector &v)
+MyVector &MyVector::operator=(const MyVector &v)
 {
     delete[] data;
     size = v.size;
@@ -49,7 +49,7 @@ SlowVector &SlowVector::operator=(const SlowVector &v)
 }
 
 //Move assignment
-SlowVector &SlowVector::operator=(SlowVector && v)
+MyVector &MyVector::operator=(MyVector && v)
 {
     delete[] data;
     size = v.size;
@@ -59,7 +59,7 @@ SlowVector &SlowVector::operator=(SlowVector && v)
 
 }
 
-double& SlowVector::operator[](int i) 
+double& MyVector::operator[](int i) 
 {
     return data[i];
 }
