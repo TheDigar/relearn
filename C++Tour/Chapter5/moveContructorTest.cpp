@@ -1,5 +1,4 @@
 //STD includes
-#include <algorithm>
 #include <chrono>
 #include <iostream>
 
@@ -8,13 +7,19 @@
 
 int main()
 {
-    MyVector v1{10000000};
-    MyVector v2 {10000000};
+    //Even smaller vectors will show the differece between a copy and a move
+    MyVector v1{1000};
 
+    //Using std::chrono to measure operation time, good enough to demonstrate the difference here
     auto t1 = std::chrono::steady_clock::now();
-    MyVector v3 = std::move(v1);
+    MyVector v2 = v1;
     auto t2 = std::chrono::steady_clock::now();
-    auto d_nano = std::chrono::duration_cast<std::chrono::nanoseconds>( t2 - t1 ).count();
+    auto delta = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+    std::cout << "Copy time: " << delta << std::endl;
 
-    std::cout << "Move time: " << d_nano << std::endl;
+    t1 = std::chrono::steady_clock::now();
+    MyVector v3 = std::move(v1);
+    t2 = std::chrono::steady_clock::now();
+    delta = std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+    std::cout << "Move time: " << delta << std::endl;
 }
