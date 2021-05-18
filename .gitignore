@@ -33,3 +33,8 @@
 
 #vscode stuff
 .vscode/*
+/LearnOpenGL/glfw-3.3.4
+/LearnOpenGL/LearnOpenGLExperiment/LearnOpenGLExperiment.vcxproj.user
+/LearnOpenGL/LearnOpenGLExperiment/LearnOpenGLExperiment.vcxproj.filters
+/LearnOpenGL/LearnOpenGLExperiment/.vs/LearnOpenGLExperiment/v16
+/LearnOpenGL/LearnOpenGLExperiment/x64/Debug
