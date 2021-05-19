@@ -4,9 +4,12 @@
 
 #include <iostream>
 
-void framebufferSizeCallback(GLFWwindow* window, int width, int height)
+void processInput(GLFWwindow* window)
 {
-	glViewport(0, 0, width, height);
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, true);
+	}
 }
 
 int main()
@@ -39,12 +42,25 @@ int main()
 
 	glViewport(0, 0, startingWidth, startingHeight);
 
-	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+	//Using a lambda as the resize function for the callback
+	glfwSetFramebufferSizeCallback(window, 
+		[](GLFWwindow* window, int width, int height)
+		{
+			glViewport(0, 0, width, height);
+		});
 
 	while (!glfwWindowShouldClose(window))
 	{
-		glfwSwapBuffers(window);
+		//input
+		processInput(window);
+
+		//Rendering
+		glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		//check and call events and swap buffers 
 		glfwPollEvents();
+		glfwSwapBuffers(window);
 	}
 
 	glfwTerminate();
