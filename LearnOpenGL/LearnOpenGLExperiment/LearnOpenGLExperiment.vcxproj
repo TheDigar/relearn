@@ -145,12 +145,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\OpenGLContext.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\OpenGLContext.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\basic.frag" />
+    <None Include="shaders\basic.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
