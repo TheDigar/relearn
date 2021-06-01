@@ -100,3 +100,9 @@ void Shader::setUniform(const std::string uniformName, float v1, float v2, float
 	int uniformLocation = glGetUniformLocation(ID, uniformName.c_str());
 	glUniform4f(uniformLocation, v1, v2, v3, v4);
 }
+
+void Shader::setUniform(const std::string uniformName, int v1)
+{
+	int uniformLocation = glGetUniformLocation(ID, uniformName.c_str());
+	glUniform1i(uniformLocation, v1);
+}
