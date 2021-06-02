@@ -16,6 +16,7 @@ public:
 	//use shader
 	void use();
 	void setUniform(const std::string uniformName, float v1, float v2, float v3, float v4);
+	void setUniform(const std::string uniformName, float v1);
 	void setUniform(const std::string uniformName, int v1);
 };
 

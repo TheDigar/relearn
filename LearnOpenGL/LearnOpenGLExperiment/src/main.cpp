@@ -8,11 +8,21 @@
 #include <Shader.h>
 #include <Texture.h>
 
-void processInput(GLFWwindow* window)
+void processInput(GLFWwindow* window, float& mix)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, true);
+	}
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		if(mix < 1.0f)
+			mix += 0.001f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		if(mix > 0.0f)
+			mix -= 0.001f;
 	}
 }
 
@@ -65,11 +75,12 @@ int main()
 	shaderProgram.use();
 	shaderProgram.setUniform("texture1", 0);
 	shaderProgram.setUniform("texture2", 1);
+	float mix = 0.2f;
 
 	while (!glfwWindowShouldClose(oglContext.GetWindow()))
 	{
 		//input
-		processInput(oglContext.GetWindow());
+		processInput(oglContext.GetWindow(), mix);
 
 		//Rendering
 		glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
@@ -81,16 +92,18 @@ int main()
 		//update color
 		float timeValue = glfwGetTime();
 		//float redValue = (sin(timeValue) / 2.0f) + 0.5f;
-		float xValue = sin(timeValue) / 2.0f;
+		float xValue = sin(timeValue/2.0f) / 2.0f;
+		float yValue = sin(timeValue/4.0f) / 2.0f;
 		/*int vertexColorLocation = glGetUniformLocation(shaderProgram, "vertexColor");
 		glUniform4f(vertexColorLocation, redValue, 0.0f, 0.0f, 1.0f);*/
-		shaderProgram.setUniform("position", xValue, 0.0f, 0.0f, 0.0f);
+		shaderProgram.setUniform("position", xValue, yValue, 0.0f, 0.0f);
 		
 		glActiveTexture(GL_TEXTURE0);
 		tex1.bind();
 		glActiveTexture(GL_TEXTURE1);
 		tex2.bind();
 		shaderProgram.use();
+		shaderProgram.setUniform("mixValue", mix);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

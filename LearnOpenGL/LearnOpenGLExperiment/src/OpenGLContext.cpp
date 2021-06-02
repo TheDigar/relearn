@@ -13,8 +13,9 @@ OpenGLContext::OpenGLContext(int width, int height)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	//Needed on MacOSX
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#ifdef __APPLE__
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
 	mWindow = glfwCreateWindow(width, height, "LearnOpenGLExperiment", NULL, NULL);
 	if (mWindow == NULL)
