@@ -1,12 +1,16 @@
 //This order matters as glad.h already includes OpenGL headers ahead of glfw3...
-#include <glad\glad.h>
-#include <GLFW\glfw3.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <iostream>
 
 #include <OpenGLContext.h>
-#include <Shader.h>
+#include <Shader.h>s
 #include <Texture.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 void processInput(GLFWwindow* window, float& mix)
 {
@@ -77,6 +81,7 @@ int main()
 	shaderProgram.setUniform("texture2", 1);
 	float mix = 0.2f;
 
+	
 	while (!glfwWindowShouldClose(oglContext.GetWindow()))
 	{
 		//input
@@ -89,14 +94,14 @@ int main()
 		//Draw stuff
 		shaderProgram.use();
 
-		//update color
+		////update color
 		float timeValue = glfwGetTime();
-		//float redValue = (sin(timeValue) / 2.0f) + 0.5f;
-		float xValue = sin(timeValue/2.0f) / 2.0f;
-		float yValue = sin(timeValue/4.0f) / 2.0f;
-		/*int vertexColorLocation = glGetUniformLocation(shaderProgram, "vertexColor");
-		glUniform4f(vertexColorLocation, redValue, 0.0f, 0.0f, 1.0f);*/
-		shaderProgram.setUniform("position", xValue, yValue, 0.0f, 0.0f);
+		////float redValue = (sin(timeValue) / 2.0f) + 0.5f;
+		//float xValue = sin(timeValue / 2.0f) / 2.0f;
+		//float yValue = sin(timeValue / 4.0f) / 2.0f;
+		///*int vertexColorLocation = glGetUniformLocation(shaderProgram, "vertexColor");
+		//glUniform4f(vertexColorLocation, redValue, 0.0f, 0.0f, 1.0f);*/
+		//shaderProgram.setUniform("position", xValue, yValue, 0.0f, 0.0f);
 		
 		glActiveTexture(GL_TEXTURE0);
 		tex1.bind();
@@ -104,7 +109,25 @@ int main()
 		tex2.bind();
 		shaderProgram.use();
 		shaderProgram.setUniform("mixValue", mix);
+
 		glBindVertexArray(VAO);
+
+		//Transforms
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans = glm::rotate(trans, timeValue, glm::vec3(0.0f, 0.0f, 1.0f));
+
+		unsigned int transformLoc = glGetUniformLocation(shaderProgram.ID, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		//Transforms2
+		trans = glm::mat4(1.0f);
+		trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
+		trans = glm::scale(trans, glm::vec3(sin(timeValue / 2.0f), sin(timeValue / 2.0f), 0.0f));
+
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		//check and call events and swap buffers 

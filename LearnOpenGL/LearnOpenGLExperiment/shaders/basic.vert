@@ -6,10 +6,10 @@ layout (location = 2) in vec2 aTexCoord;
 out vec4 vertexColor;
 out vec2 textureCoord;
 
-uniform vec4 position;
+uniform mat4 transform;
 void main()
 {
-   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f) + position;
+   gl_Position = transform * vec4(aPos, 1.0f);
    vertexColor = vec4(aColor.r, aColor.g, aColor.b, 1.0f);
    textureCoord = aTexCoord;
 }
