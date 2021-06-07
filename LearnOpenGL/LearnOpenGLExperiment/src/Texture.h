@@ -13,6 +13,6 @@ public:
 		GLenum wrapT= GL_REPEAT, 
 		GLenum minFilter = GL_LINEAR, 
 		GLenum magFilter = GL_LINEAR);
-	void bind();
+	void Bind();
 };
 
