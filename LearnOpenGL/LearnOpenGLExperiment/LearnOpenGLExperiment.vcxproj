@@ -145,6 +145,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\SceneObject.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\stb_image.cpp" />
     <ClCompile Include="src\Shader.cpp" />
@@ -154,6 +156,8 @@
     <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Model.h" />
+    <ClInclude Include="src\SceneObject.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\OpenGLContext.h" />
@@ -162,6 +166,7 @@
   <ItemGroup>
     <None Include="shaders\basic.frag" />
     <None Include="shaders\basic.vert" />
+    <None Include="shaders\white.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\awesomeface.png" />
