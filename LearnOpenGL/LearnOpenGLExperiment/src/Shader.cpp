@@ -107,6 +107,12 @@ void Shader::setUniform(const std::string uniformName, float v1, float v2, float
 	glUniform3f(uniformLocation, v1, v2, v3);
 }
 
+void Shader::setUniform(const std::string uniformName, const glm::vec3& vec)
+{
+	int uniformLocation = glGetUniformLocation(ID, uniformName.c_str());
+	glUniform3f(uniformLocation, vec.x, vec.y, vec.z);
+}
+
 void Shader::setUniform(const std::string uniformName, float v1)
 {
 	int uniformLocation = glGetUniformLocation(ID, uniformName.c_str());
@@ -119,8 +125,14 @@ void Shader::setUniform(const std::string uniformName, int v1)
 	glUniform1i(uniformLocation, v1);
 }
 
-void Shader::setUniformMatrix(const std::string uniformName, int n, bool transpose, float* data)
+void Shader::setUniformMatrix4(const std::string uniformName, int n, bool transpose, float* data)
 {
 	int uniformLocation = glGetUniformLocation(ID, uniformName.c_str());
 	glUniformMatrix4fv(uniformLocation, n, transpose, data);
+}
+
+void Shader::setUniformMatrix3(const std::string uniformName, int n, bool transpose, float* data)
+{
+	int uniformLocation = glGetUniformLocation(ID, uniformName.c_str());
+	glUniformMatrix3fv(uniformLocation, n, transpose, data);
 }

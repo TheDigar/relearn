@@ -1,4 +1,5 @@
-#include "SceneObject.h"
+#include <SceneObject.h>
+
 #include <glad/glad.h>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
@@ -26,13 +27,16 @@ void SceneObject::BuildModelMatrix()
 	mModelMatrix *= glm::yawPitchRoll(mYaw, mPitch, mRoll);
 }
 
-void SceneObject::Draw()
+void SceneObject::Draw(Camera& camera)
 {
 	BuildModelMatrix();
 
 	//Transforms
 	mShader->use();
-	unsigned int modelLoc = glGetUniformLocation(mShader->ID, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mModelMatrix));
+	mShader->setUniformMatrix4("model", 1, GL_FALSE, glm::value_ptr(mModelMatrix));
+
+	glm::mat3 normalMatrix = glm::inverse(camera.GetView() * mModelMatrix); 
+	mShader->setUniformMatrix3("normalMatrix", 1, true, glm::value_ptr(normalMatrix));
+
 	mModel->Draw();
 }

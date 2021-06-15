@@ -1,6 +1,8 @@
 #pragma once
-#include "Shader.h"
-#include "Model.h"
+#include <Shader.h>
+#include <Model.h>
+#include <Camera.h>
+
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 
@@ -20,7 +22,7 @@ private:
 
 public:
     SceneObject(Model* model, Shader* shader);
-    void Draw();
+    void Draw(Camera& camera);
 	constexpr void SetPosition(const glm::vec3& pos) { mPosition = pos; }
 	constexpr void SetScale(const glm::vec3& scale) { mScale = scale; }
 	constexpr void SetYaw(const float& yaw) { mYaw = yaw; }

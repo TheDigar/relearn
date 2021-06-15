@@ -46,18 +46,19 @@ int main()
 {
 	//Create window and OpenGl Context
 	OpenGLContext oglContext(800,600);
-	Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), -90.0f, 0.0f, 45.0f, static_cast<float>(oglContext.GetWidth() / oglContext.GetHeight()));
+	Camera camera(glm::vec3(-2.5f, 1.5f, -1.5f), 42.0f, -25.0f, 45.0f, static_cast<float>(oglContext.GetWidth() / oglContext.GetHeight()));
 
 	Model box;
 
 	//Light object creation
 	Shader whiteShaderProgram("./shaders/basic.vert", "./shaders/white.frag");
 	SceneObject lightObject(&box, &whiteShaderProgram);
-	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 	lightObject.SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
+	lightObject.SetPosition(glm::vec3(1.2f, 1.0f, 2.0f));
+	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 	whiteShaderProgram.use();
-	whiteShaderProgram.setUniformMatrix("projection", 1, false, glm::value_ptr(camera.GetProjection()));
-	whiteShaderProgram.setUniform("lightColor", lightColor.r, lightColor.g, lightColor.b);
+	whiteShaderProgram.setUniformMatrix4("projection", 1, false, glm::value_ptr(camera.GetProjection()));
+	whiteShaderProgram.setUniform("lightColor", lightColor);
 	
 	//Box object creation
 	Shader shaderProgram("./shaders/basic.vert", "./shaders/basic.frag");
@@ -73,8 +74,8 @@ int main()
 	shaderProgram.setUniform("texture1", 0);
 	shaderProgram.setUniform("texture2", 1);
 	shaderProgram.setUniform("mixValue", 0.2f);
-	shaderProgram.setUniformMatrix("projection", 1, false, glm::value_ptr(camera.GetProjection()));
-	shaderProgram.setUniform("lightColor", lightColor.r, lightColor.g, lightColor.b);
+	shaderProgram.setUniformMatrix4("projection", 1, false, glm::value_ptr(camera.GetProjection()));
+	shaderProgram.setUniform("lightColor", lightColor);
 
 
 
@@ -102,20 +103,24 @@ int main()
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		whiteShaderProgram.use();
+		whiteShaderProgram.setUniformMatrix4("view", 1, false, glm::value_ptr(camera.GetView()));
+
+		//lightObject.SetPosition(glm::vec3(sin(currentTime)*2.0f, 2.0f, cos(currentTime)*2.0f));
+		lightObject.Draw(camera);
+
 		//Draw stuff
 		shaderProgram.use();
-		shaderProgram.setUniformMatrix("view", 1, false, glm::value_ptr(camera.GetView()));
+		shaderProgram.setUniformMatrix4("view", 1, false, glm::value_ptr(camera.GetView()));
+		shaderProgram.setUniform("lightPos", lightObject.GetPosition());
+		shaderProgram.setUniform("viewPos", camera.GetPosition());
 		glActiveTexture(GL_TEXTURE0);
 		tex1.Bind();
 		glActiveTexture(GL_TEXTURE1);
 		tex2.Bind();
-		boxObject.Draw();
+		boxObject.Draw(camera);
 
-		whiteShaderProgram.use();
-		whiteShaderProgram.setUniformMatrix("view", 1, false, glm::value_ptr(camera.GetView()));
 
-		lightObject.SetPosition(glm::vec3(sin(currentTime), 2.0f, cos(currentTime)));
-		lightObject.Draw();
 
 		//check and call events and swap buffers 
 		glfwPollEvents();
