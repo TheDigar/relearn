@@ -164,9 +164,12 @@
     <ClInclude Include="src\Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\basic.frag" />
-    <None Include="shaders\basic.vert" />
-    <None Include="shaders\white.frag" />
+    <None Include="shaders\Lamp.vert" />
+    <None Include="shaders\TexturePhong.frag" />
+    <None Include="shaders\TexturePhong.vert" />
+    <None Include="shaders\Lamp.frag" />
+    <None Include="shaders\MaterialPhong.frag" />
+    <None Include="shaders\MaterialPhong.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\awesomeface.png" />

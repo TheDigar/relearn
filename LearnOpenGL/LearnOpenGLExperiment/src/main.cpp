@@ -51,7 +51,7 @@ int main()
 	Model box;
 
 	//Light object creation
-	Shader whiteShaderProgram("./shaders/basic.vert", "./shaders/white.frag");
+	Shader whiteShaderProgram("./shaders/Lamp.vert", "./shaders/Lamp.frag");
 	SceneObject lightObject(&box, &whiteShaderProgram);
 	lightObject.SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
 	lightObject.SetPosition(glm::vec3(1.2f, 1.0f, 2.0f));
@@ -61,7 +61,7 @@ int main()
 	whiteShaderProgram.setUniform("lightColor", lightColor);
 	
 	//Box object creation
-	Shader shaderProgram("./shaders/basic.vert", "./shaders/basic.frag");
+	Shader shaderProgram("./shaders/TexturePhong.vert", "./shaders/TexturePhong.frag");
 	SceneObject boxObject(&box, &shaderProgram);
 	boxObject.SetPosition(glm::vec3(-0.5f, -0.5f, 0.0f));
 	boxObject.SetYaw(40.0f);
