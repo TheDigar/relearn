@@ -61,22 +61,23 @@ int main()
 	whiteShaderProgram.setUniform("lightColor", lightColor);
 	
 	//Box object creation
-	Shader shaderProgram("./shaders/TexturePhong.vert", "./shaders/TexturePhong.frag");
+	Shader shaderProgram("./shaders/MaterialPhong.vert", "./shaders/MaterialPhong.frag");
 	SceneObject boxObject(&box, &shaderProgram);
 	boxObject.SetPosition(glm::vec3(-0.5f, -0.5f, 0.0f));
 	boxObject.SetYaw(40.0f);
 
-	Texture tex1("./resources/wall.jpg");
-	Texture tex2("./resources/awesomeface.png");
-
 	//Tell opengl which texture unit each sampler belongs to
 	shaderProgram.use();
-	shaderProgram.setUniform("texture1", 0);
-	shaderProgram.setUniform("texture2", 1);
-	shaderProgram.setUniform("mixValue", 0.2f);
 	shaderProgram.setUniformMatrix4("projection", 1, false, glm::value_ptr(camera.GetProjection()));
-	shaderProgram.setUniform("lightColor", lightColor);
-
+	//material properties
+	shaderProgram.setUniform("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+	shaderProgram.setUniform("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+	shaderProgram.setUniform("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+	shaderProgram.setUniform("material.shininess", 32.0f);
+	//light properties
+	shaderProgram.setUniform("light.ambient", glm::vec3(0.2f));
+	shaderProgram.setUniform("light.diffuse", glm::vec3(0.5f));
+	shaderProgram.setUniform("light.specular", glm::vec3(1.0f));
 
 
 	double lastFrameTime = glfwGetTime();
@@ -100,7 +101,7 @@ int main()
 		lastMouseY = mouseY;
 
 		//Clear the background to cornflower blue and clear the depth buffer
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		whiteShaderProgram.use();
@@ -114,10 +115,8 @@ int main()
 		shaderProgram.setUniformMatrix4("view", 1, false, glm::value_ptr(camera.GetView()));
 		shaderProgram.setUniform("lightPos", lightObject.GetPosition());
 		shaderProgram.setUniform("viewPos", camera.GetPosition());
-		glActiveTexture(GL_TEXTURE0);
-		tex1.Bind();
-		glActiveTexture(GL_TEXTURE1);
-		tex2.Bind();
+
+
 		boxObject.Draw(camera);
 
 
