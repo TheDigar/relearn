@@ -6,7 +6,8 @@
 
 #include <iostream>
 
-OpenGLContext::OpenGLContext(int width, int height)
+OpenGLContext::OpenGLContext(int width, int height):
+	mWidth{ width }, mHeight {height}
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -17,7 +18,7 @@ OpenGLContext::OpenGLContext(int width, int height)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-	mWindow = glfwCreateWindow(width, height, "LearnOpenGLExperiment", NULL, NULL);
+	mWindow = glfwCreateWindow(mWidth, mHeight, "LearnOpenGLExperiment", NULL, NULL);
 	if (mWindow == NULL)
 	{
 		std::cout << "Failed to create window" << std::endl;
@@ -33,7 +34,7 @@ OpenGLContext::OpenGLContext(int width, int height)
 		//return -1;
 	}
 
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, mWidth, mHeight);
 
 	//Using a lambda as the resize function for the callback
 	glfwSetFramebufferSizeCallback(mWindow,
@@ -41,6 +42,9 @@ OpenGLContext::OpenGLContext(int width, int height)
 		{
 			glViewport(0, 0, w, h);
 		});
+
+	glEnable(GL_DEPTH_TEST);
+	glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 OpenGLContext::~OpenGLContext()

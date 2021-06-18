@@ -36,7 +36,7 @@ Texture::Texture(const char* texturePath, GLenum wrapS, GLenum wrapT, GLenum min
 	stbi_image_free(data);
 }
 
-void Texture::bind()
+void Texture::Bind()
 {
 	glBindTexture(GL_TEXTURE_2D, ID);
 }

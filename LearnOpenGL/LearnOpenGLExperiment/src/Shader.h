@@ -1,10 +1,11 @@
 #pragma once
 
 #include <string>
+#include <glm/vec3.hpp>
 
 class Shader
 {
-private:
+public:
 	//Shader program ID
 	unsigned int ID;
 
@@ -16,7 +17,11 @@ public:
 	//use shader
 	void use();
 	void setUniform(const std::string uniformName, float v1, float v2, float v3, float v4);
+	void setUniform(const std::string uniformName, float v1, float v2, float v3);
+	void setUniform(const std::string uniformName, const glm::vec3& vec);
 	void setUniform(const std::string uniformName, float v1);
 	void setUniform(const std::string uniformName, int v1);
+	void setUniformMatrix4(const std::string uniformName, int n, bool transpose, float* data);
+	void setUniformMatrix3(const std::string uniformName, int n, bool transpose, float* data);
 };
 

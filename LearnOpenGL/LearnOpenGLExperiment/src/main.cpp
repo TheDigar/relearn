@@ -1,111 +1,133 @@
 //This order matters as glad.h already includes OpenGL headers ahead of glfw3...
-#include <glad\glad.h>
-#include <GLFW\glfw3.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <iostream>
 
 #include <OpenGLContext.h>
 #include <Shader.h>
 #include <Texture.h>
+#include <Camera.h>
+#include <Model.h>
+#include <SceneObject.h>
 
-void processInput(GLFWwindow* window, float& mix)
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+void processInput(GLFWwindow* window,  Camera& camera, const float& deltaTime)
 {
+	//Window input
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+
+	//Camera input
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		if(mix < 1.0f)
-			mix += 0.001f;
+		camera.Move(Camera_Movement::Forward, deltaTime);
 	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		if(mix > 0.0f)
-			mix -= 0.001f;
+		camera.Move(Camera_Movement::Backward, deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		camera.Move(Camera_Movement::Left, deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		camera.Move(Camera_Movement::Right, deltaTime);
 	}
 }
 
 int main()
 {
+	//Create window and OpenGl Context
 	OpenGLContext oglContext(800,600);
+	Camera camera(glm::vec3(-2.5f, 1.5f, -1.5f), 42.0f, -25.0f, 45.0f, static_cast<float>(oglContext.GetWidth() / oglContext.GetHeight()));
 
-	//Create data to render
-	float vertices[]
-	{   // position            //colors       //texture coordinates
-		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-		-0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-		 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f
-	};
+	Model box;
 
-	unsigned int indices[]
-	{
-		0, 1, 2,
-		2, 1, 3
-	};
+	//Light object creation
+	Shader whiteShaderProgram("./shaders/Lamp.vert", "./shaders/Lamp.frag");
+	SceneObject lightObject(&box, &whiteShaderProgram);
+	lightObject.SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
+	lightObject.SetPosition(glm::vec3(1.2f, 1.0f, 2.0f));
+	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+	whiteShaderProgram.use();
+	whiteShaderProgram.setUniformMatrix4("projection", 1, false, glm::value_ptr(camera.GetProjection()));
+	whiteShaderProgram.setUniform("lightColor", lightColor);
+	
+	//Box object creation
+	Shader shaderProgram("./shaders/MaterialPhong.vert", "./shaders/MaterialPhong.frag");
+	SceneObject boxObject(&box, &shaderProgram);
+	boxObject.SetPosition(glm::vec3(-0.5f, -0.5f, 0.0f));
+	boxObject.SetYaw(40.0f);
+	Texture diffuseMap("./resources/container2.png");
+	Texture specularMap("./resources/container2_specular.png");
+	Texture emissionMap("./resources/matrix.jpg");
 
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	unsigned int EBO;
-	glGenBuffers(1, &EBO);
-
-	glBindVertexArray(VAO);	
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<const void*>(0));
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	//Shader program creation
-	Shader shaderProgram("./shaders/basic.vert", "./shaders/basic.frag");
-
-	//Load texture
-	Texture tex1("./resources/wall.jpg");
-	Texture tex2("./resources/awesomeface.png");
-
-	//Tell opengl which texture unit each sampler belongs to
 	shaderProgram.use();
-	shaderProgram.setUniform("texture1", 0);
-	shaderProgram.setUniform("texture2", 1);
-	float mix = 0.2f;
+	shaderProgram.setUniformMatrix4("projection", 1, false, glm::value_ptr(camera.GetProjection()));
+	//material properties
+	shaderProgram.setUniform("material.diffuse", 0);
+	shaderProgram.setUniform("material.specular", 1);
+	shaderProgram.setUniform("material.emission", 2);
+	shaderProgram.setUniform("material.shininess", 32.0f);
+	//light properties
+	shaderProgram.setUniform("light.ambient", glm::vec3(0.2f));
+	shaderProgram.setUniform("light.diffuse", glm::vec3(0.5f));
+	shaderProgram.setUniform("light.specular", glm::vec3(1.0f));
+
+
+	double lastFrameTime = glfwGetTime();
+	double lastMouseX, lastMouseY;
+	glfwGetCursorPos(oglContext.GetWindow(), &lastMouseX, &lastMouseY);
+
 
 	while (!glfwWindowShouldClose(oglContext.GetWindow()))
 	{
-		//input
-		processInput(oglContext.GetWindow(), mix);
+		//Update time
+		double currentTime = glfwGetTime();
+		float deltaTime = currentTime - lastFrameTime;
+		lastFrameTime = currentTime;
 
-		//Rendering
-		glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		//Input Handling
+		processInput(oglContext.GetWindow(), camera, deltaTime);
+		double mouseX, mouseY;
+		glfwGetCursorPos(oglContext.GetWindow(), &mouseX, &mouseY);
+		camera.Tilt(mouseX - lastMouseX, lastMouseY - mouseY);
+		lastMouseX = mouseX;
+		lastMouseY = mouseY;
+
+		//Clear the background to cornflower blue and clear the depth buffer
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		whiteShaderProgram.use();
+		whiteShaderProgram.setUniformMatrix4("view", 1, false, glm::value_ptr(camera.GetView()));
+
+		//lightObject.SetPosition(glm::vec3(sin(currentTime)*2.0f, 2.0f, cos(currentTime)*2.0f));
+		lightObject.Draw(camera);
 
 		//Draw stuff
 		shaderProgram.use();
-
-		//update color
-		float timeValue = glfwGetTime();
-		//float redValue = (sin(timeValue) / 2.0f) + 0.5f;
-		float xValue = sin(timeValue/2.0f) / 2.0f;
-		float yValue = sin(timeValue/4.0f) / 2.0f;
-		/*int vertexColorLocation = glGetUniformLocation(shaderProgram, "vertexColor");
-		glUniform4f(vertexColorLocation, redValue, 0.0f, 0.0f, 1.0f);*/
-		shaderProgram.setUniform("position", xValue, yValue, 0.0f, 0.0f);
-		
+		shaderProgram.setUniformMatrix4("view", 1, false, glm::value_ptr(camera.GetView()));
+		shaderProgram.setUniform("lightPos", lightObject.GetPosition());
+		shaderProgram.setUniform("viewPos", camera.GetPosition());
 		glActiveTexture(GL_TEXTURE0);
-		tex1.bind();
+		diffuseMap.Bind();
 		glActiveTexture(GL_TEXTURE1);
-		tex2.bind();
-		shaderProgram.use();
-		shaderProgram.setUniform("mixValue", mix);
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		specularMap.Bind();
+		glActiveTexture(GL_TEXTURE2);
+		emissionMap.Bind();
+
+
+		boxObject.Draw(camera);
+
+
 
 		//check and call events and swap buffers 
 		glfwPollEvents();
