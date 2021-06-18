@@ -65,14 +65,16 @@ int main()
 	SceneObject boxObject(&box, &shaderProgram);
 	boxObject.SetPosition(glm::vec3(-0.5f, -0.5f, 0.0f));
 	boxObject.SetYaw(40.0f);
+	Texture diffuseMap("./resources/container2.png");
+	Texture specularMap("./resources/container2_specular.png");
+	Texture emissionMap("./resources/matrix.jpg");
 
-	//Tell opengl which texture unit each sampler belongs to
 	shaderProgram.use();
 	shaderProgram.setUniformMatrix4("projection", 1, false, glm::value_ptr(camera.GetProjection()));
 	//material properties
-	shaderProgram.setUniform("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-	shaderProgram.setUniform("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-	shaderProgram.setUniform("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+	shaderProgram.setUniform("material.diffuse", 0);
+	shaderProgram.setUniform("material.specular", 1);
+	shaderProgram.setUniform("material.emission", 2);
 	shaderProgram.setUniform("material.shininess", 32.0f);
 	//light properties
 	shaderProgram.setUniform("light.ambient", glm::vec3(0.2f));
@@ -115,6 +117,12 @@ int main()
 		shaderProgram.setUniformMatrix4("view", 1, false, glm::value_ptr(camera.GetView()));
 		shaderProgram.setUniform("lightPos", lightObject.GetPosition());
 		shaderProgram.setUniform("viewPos", camera.GetPosition());
+		glActiveTexture(GL_TEXTURE0);
+		diffuseMap.Bind();
+		glActiveTexture(GL_TEXTURE1);
+		specularMap.Bind();
+		glActiveTexture(GL_TEXTURE2);
+		emissionMap.Bind();
 
 
 		boxObject.Draw(camera);
