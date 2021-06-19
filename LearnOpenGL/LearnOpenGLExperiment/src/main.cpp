@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <list>
 
 #include <OpenGLContext.h>
 #include <Shader.h>
@@ -60,11 +61,32 @@ int main()
 	whiteShaderProgram.setUniformMatrix4("projection", 1, false, glm::value_ptr(camera.GetProjection()));
 	whiteShaderProgram.setUniform("lightColor", lightColor);
 	
-	//Box object creation
+
+	glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	Shader shaderProgram("./shaders/MaterialPhong.vert", "./shaders/MaterialPhong.frag");
-	SceneObject boxObject(&box, &shaderProgram);
-	boxObject.SetPosition(glm::vec3(-0.5f, -0.5f, 0.0f));
-	boxObject.SetYaw(40.0f);
+
+	std::list<SceneObject*> objects;
+	for (unsigned int i = 0; i < 10; i++)
+	{
+		SceneObject* object = new SceneObject(&box, &shaderProgram);
+		object->SetPosition(cubePositions[i]);
+		float angle = 20.0f * i;
+		object->SetYaw(40.0f);
+		objects.push_back(object);
+	}
+	//Box object creation
 	Texture diffuseMap("./resources/container2.png");
 	Texture specularMap("./resources/container2_specular.png");
 	Texture emissionMap("./resources/matrix.jpg");
@@ -115,17 +137,21 @@ int main()
 		//Draw stuff
 		shaderProgram.use();
 		shaderProgram.setUniformMatrix4("view", 1, false, glm::value_ptr(camera.GetView()));
-		shaderProgram.setUniform("lightPos", lightObject.GetPosition());
+		shaderProgram.setUniform("light.direction", glm::vec4(-0.2f, -1.0f, -0.3f ,0.0f));
+		//shaderProgram.setUniform("light.direction", camera.GetView() * glm::vec4(lightObject.GetPosition(), 1.0f));
 		shaderProgram.setUniform("viewPos", camera.GetPosition());
 		glActiveTexture(GL_TEXTURE0);
 		diffuseMap.Bind();
 		glActiveTexture(GL_TEXTURE1);
 		specularMap.Bind();
-		glActiveTexture(GL_TEXTURE2);
-		emissionMap.Bind();
+		//glActiveTexture(GL_TEXTURE2);
+		//emissionMap.Bind();
 
+		for (auto object : objects)
+		{
+			object->Draw(camera);
+		}
 
-		boxObject.Draw(camera);
 
 
 

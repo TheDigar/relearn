@@ -165,8 +165,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\Lamp.vert" />
-    <None Include="shaders\TexturePhong.frag" />
-    <None Include="shaders\TexturePhong.vert" />
     <None Include="shaders\Lamp.frag" />
     <None Include="shaders\MaterialPhong.frag" />
     <None Include="shaders\MaterialPhong.vert" />
