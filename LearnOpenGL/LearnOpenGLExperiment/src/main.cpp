@@ -75,7 +75,7 @@ int main()
 	glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
-	Shader shaderProgram("./shaders/MaterialPhong.vert", "./shaders/MaterialPhong.frag");
+	Shader shaderProgram("./shaders/MaterialPhong.vert", "./shaders/MaterialPhongFlashlight.frag");
 
 	std::list<SceneObject*> objects;
 	for (unsigned int i = 0; i < 10; i++)
@@ -83,13 +83,14 @@ int main()
 		SceneObject* object = new SceneObject(&box, &shaderProgram);
 		object->SetPosition(cubePositions[i]);
 		float angle = 20.0f * i;
-		object->SetYaw(40.0f);
+		object->SetYaw(angle);
+		object->SetPitch(angle / 13.0f);
 		objects.push_back(object);
 	}
 	//Box object creation
 	Texture diffuseMap("./resources/container2.png");
 	Texture specularMap("./resources/container2_specular.png");
-	Texture emissionMap("./resources/matrix.jpg");
+	//Texture emissionMap("./resources/matrix.jpg");
 
 	shaderProgram.use();
 	shaderProgram.setUniformMatrix4("projection", 1, false, glm::value_ptr(camera.GetProjection()));
@@ -102,6 +103,14 @@ int main()
 	shaderProgram.setUniform("light.ambient", glm::vec3(0.2f));
 	shaderProgram.setUniform("light.diffuse", glm::vec3(0.5f));
 	shaderProgram.setUniform("light.specular", glm::vec3(1.0f));
+	shaderProgram.setUniform("light.constant", 1.0f);
+	shaderProgram.setUniform("light.linear", 0.09f);
+	shaderProgram.setUniform("light.quadratic", 0.032f);
+	shaderProgram.setUniform("light.constant", 1.0f);
+	shaderProgram.setUniform("light.linear", 0.09f);
+	shaderProgram.setUniform("light.quadratic", 0.032f);
+	shaderProgram.setUniform("light.innerCutOff", glm::cos(glm::radians(12.5f)));
+	shaderProgram.setUniform("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 
 
 	double lastFrameTime = glfwGetTime();
@@ -131,14 +140,14 @@ int main()
 		whiteShaderProgram.use();
 		whiteShaderProgram.setUniformMatrix4("view", 1, false, glm::value_ptr(camera.GetView()));
 
-		//lightObject.SetPosition(glm::vec3(sin(currentTime)*2.0f, 2.0f, cos(currentTime)*2.0f));
+		lightObject.SetPosition(glm::vec3(sin(currentTime)*2.0f, 2.0f, cos(currentTime)*2.0f));
 		lightObject.Draw(camera);
 
 		//Draw stuff
 		shaderProgram.use();
 		shaderProgram.setUniformMatrix4("view", 1, false, glm::value_ptr(camera.GetView()));
-		shaderProgram.setUniform("light.direction", glm::vec4(-0.2f, -1.0f, -0.3f ,0.0f));
-		//shaderProgram.setUniform("light.direction", camera.GetView() * glm::vec4(lightObject.GetPosition(), 1.0f));
+		//shaderProgram.setUniform("light.direction", glm::vec4(-0.2f, -1.0f, -0.3f ,0.0f));
+		shaderProgram.setUniform("light.direction", glm::vec4(camera.GetFront(), 1.0f));
 		shaderProgram.setUniform("viewPos", camera.GetPosition());
 		glActiveTexture(GL_TEXTURE0);
 		diffuseMap.Bind();
