@@ -2,6 +2,7 @@
 
 #include <string>
 #include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 
 class Shader
 {
@@ -17,6 +18,7 @@ public:
 	//use shader
 	void use();
 	void setUniform(const std::string uniformName, float v1, float v2, float v3, float v4);
+	void setUniform(const std::string uniformName, const glm::vec4& vec);
 	void setUniform(const std::string uniformName, float v1, float v2, float v3);
 	void setUniform(const std::string uniformName, const glm::vec3& vec);
 	void setUniform(const std::string uniformName, float v1);

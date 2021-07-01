@@ -42,5 +42,6 @@ public:
 	constexpr glm::mat4& GetView() { return mView; }
 	constexpr glm::mat4& GetProjection() { return mProjection; }
 	constexpr glm::vec3& GetPosition() { return mPosition; }
+	constexpr glm::vec3& GetFront() { return mFront; }
 };
 
