@@ -38,5 +38,5 @@ void SceneObject::Draw(Camera& camera)
 	glm::mat3 normalMatrix = glm::inverse(camera.GetView() * mModelMatrix); 
 	mShader->setUniformMatrix3("normalMatrix", 1, true, glm::value_ptr(normalMatrix));
 
-	mModel->Draw();
+	mModel->Draw(*mShader);
 }
